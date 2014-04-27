@@ -24,8 +24,6 @@ setnames(testYData, "V2", "activity")
 
 col.names = read.table("features.TXT")
 col.namesModified <- gsub("[()]","_", col.names$V2) # replace "(", ")", "-" into "_"
-#col.namesModified <- gsub("-","", col.names$V2) # replace "(", ")", "-" into "_"
-
 
 trainSubjectData  <- read.table("./train/subject_train.txt", col.names="subject", sep="", header=FALSE)
 trainXData         <- read.table("./train/X_train.txt", sep="", col.names=col.namesModified, header=FALSE)
@@ -42,9 +40,12 @@ mergedData <-rbind(trainData, testData)
 write.table(mergedData, file = "mergedData.txt", append = FALSE, quote = FALSE, sep = "\t", row.names = FALSE, col.names = TRUE)
 
 # 2. Extracts only the measurements on the mean and standard deviation for each measurement. 
+# Only variables having "mean()" and "std()" in their names were included.
 meanStdData <- data.table(mergedData[, grep("subject|activity|mean__|std__", colnames(mergedData), value=TRUE, ignore.case = FALSE)])
 
 # 5. Creates a second, independent tidy data set with the average of each variable for each activity and each subject. 
+# "each activity and each subject" is confusing! However, I thought it as grouping by both subject and activity.
+# Thus each subject can have up to six rows (ctivities).
 setkey(meanStdData, subject, activity)
 summaryDataWrite <- meanStdData[, lapply(.SD, mean()), by="subject,activity"]
 write.table(summaryDataWrite, file="tidyData.txt", sep="\t", row.names=FALSE, col.names=TRUE)

@@ -44,8 +44,9 @@ write.table(mergedData, file = "mergedData.txt", append = FALSE, quote = FALSE, 
 meanStdData <- data.table(mergedData[, grep("subject|activity|mean__|std__", colnames(mergedData), value=TRUE, ignore.case = FALSE)])
 
 # 5. Creates a second, independent tidy data set with the average of each variable for each activity and each subject. 
-# "each activity and each subject" is confusing! However, I thought it as grouping by both subject and activity.
-# Thus each subject can have up to six rows (ctivities).
+# The expression "each activity and each subject" is confusing!
+# I thought it a grouping problem, theat is 'grouping by both subject and activity'.
+# Thus each subject can have up to six rows (ativities).
 setkey(meanStdData, subject, activity)
 summaryDataWrite <- meanStdData[, lapply(.SD, mean()), by="subject,activity"]
 write.table(summaryDataWrite, file="tidyData.txt", sep="\t", row.names=FALSE, col.names=TRUE)
